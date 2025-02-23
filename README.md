@@ -1,4 +1,4 @@
-# AED: Adaptable Error Detection for Few-shot Imitation Policy 
+# VICtoR: Learning Hierarchical Vision-Instruction Correlation Rewards for Long-horizon Manipulation 
 
 This is an academic paper project page template.
 
