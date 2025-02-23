@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!-- Meta tags for social media banners, these should be filled in appropriately as they are your "business card" -->
+    <!-- Replace the content tag with appropriate information -->
+    <meta name="description" content="VICtoR: Learning Hierarchical Vision-Instruction Correlation Rewards for Long-horizon Manipulation">
+    <meta property="og:title" content="VICtoR" />
+    <meta property="og:description" content="We study reward models for long-horizon manipulation by learning from action-free videos and language instructions, which we term the visual-instruction correlation (VIC) problem. Existing VIC methods face challenges in learning rewards for longhorizon tasks due to their lack of sub-stage awareness, difficulty in modeling task complexities, and inadequate object state estimation. To address these challenges, we introduce VICtoR, a novel hierarchical VIC reward model capable of providing effective reward signals for long-horizon manipulation tasks. Trained solely on primitive motion demonstrations, VICtoR effectively provides precise reward signals for long-horizon tasks by assessing task progress at various stages using a novel stage detector and motion progress evaluator. We conducted extensive experiments in both simulated and real-world datasets. The results suggest that VICtoR outperformed the best existing methods, achieving a 43% improvement in success rates for long-horizon tasks." />
+    <meta property="og:url" content="https://cmlab-victor.github.io" />
+    <!-- Path to banner image, should be in the path listed below. Optimal dimensions are 1200X630-->
+    <meta property="og:image" content="/static/images/victor_logo.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+
+    <meta name="twitter:title" content="VICtoR: Learning Hierarchical Vision-Instruction Correlation Rewards for Long-horizon Manipulation">
+    <meta name="twitter:description" content="We study reward models for long-horizon manipulation by learning from action-free videos and language instructions, which we term the visual-instruction correlation (VIC) problem. Existing VIC methods face challenges in learning rewards for longhorizon tasks due to their lack of sub-stage awareness, difficulty in modeling task complexities, and inadequate object state estimation. To address these challenges, we introduce VICtoR, a novel hierarchical VIC reward model capable of providing effective reward signals for long-horizon manipulation tasks. Trained solely on primitive motion demonstrations, VICtoR effectively provides precise reward signals for long-horizon tasks by assessing task progress at various stages using a novel stage detector and motion progress evaluator. We conducted extensive experiments in both simulated and real-world datasets. The results suggest that VICtoR outperformed the best existing methods, achieving a 43% improvement in success rates for long-horizon tasks." />
+    <!-- Path to banner image, should be in the path listed below. Optimal dimensions are 1200X600-->
+    <meta name="twitter:image" content="static/images/victor_logo.jpg">
+    <meta name="twitter:card" content="VICtoR logo: a monitor to view the status of the robot.">
+    <!-- Keywords for your paper to be indexed by-->
+    <meta name="keywords"
+        content="reward learning, reinforcement learning, long-horizon robot learning, vision-language">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <title>VICtoR: Learning Hierarchical Vision-Instruction Correlation Rewards for Long-horizon Manipulation</title>
+    <link rel="icon" type="image/x-icon" href="static/images/favicon_io/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="static/images/favicon_io">
+    <link rel="icon" type="image/png" sizes="32x32" href="static/images/favicon_io/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="static/images/favicon_io/favicon-16x16.png">
+    <link rel="manifest" href="static/images/favicon_io/site.webmanifest">
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <link rel="stylesheet" href="static/css/bulma.min.css">
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="static/css/index.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+    <script defer src="static/fontawesome/js/fontawesome.min.js"></script>
+    <script src="static/js/bulma-carousel.min.js"></script>
+    <script src="static/js/bulma-slider.min.js"></script>
+    <script src="static/js/index.js"></script>
+    <script src="static/js/LaTeXMathML.js"></script>
+</head>
+
+<body>
+
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered is-vcentered">
+                    <div class="column "><img src="static/images/victor_logo.jpg" ></div>
+                    <div class="column has-text-centered is-four-fifths is-vcentered">
+                        <h1 class="title is-1 publication-title">VICtoR: Learning Hierarchical Vision-Instruction Correlation Rewards for Long-horizon Manipulation</h1>
+                    </div>
+                </div>
+                <div class="container is-max-desktop">
+                    <div class="columns is-centered">
+                        <div class="column has-text-centered is-four-fifths">
+                            <div class="is-size-5 publication-authors">
+                                <!-- Paper authors -->
+                                <span class="author-block">
+                                    <a href="https://khhung-906.github.io/" target="_blank">Kuo-Han Hung
+                                    </a>
+                                    <sup>*, 1</sup>,
+                                </span>
+                                <span class="author-block">
+                                    <a href="https://scholar.google.com/citations?user=xlqdpIwAAAAJ&hl=zh-TW" target="_blank">Pang-Chi 
+                                        Lo
+                                    </a>
+                                    <sup>*, 1</sup>,
+                                </span>
+                                <span class="author-block">
+                                    <a href="https://www.cmlab.csie.ntu.edu.tw/~jiafongyeh" target="_blank">Jia-Fong Yeh
+                                    </a>
+                                    <sup>*, 1</sup>,
+                                </span>
+                                <span class="author-block">
+                                    <a href="https://openreview.net/profile?id=~Han-Yuan_Hsu1" target="_blank">Han-Yuan Hsu
+                                    </a>
+                                    <sup>1</sup>,
+                                </span>
+                                <br>
+                                <span class="author-block">
+                                    <a href="https://sites.google.com/site/yitingchen0524/" target="_blank">Yi-Ting Chen
+                                    </a>
+                                    <sup>2</sup>,
+                                </span>
+                                <span class="author-block">
+                                    <a href="https://winstonhsu.info/" target="_blank">Winston H. Hsu
+                                    </a>
+                                    <sup>1</sup>
+                                </span>
+                            </div>
+
+                            <div class="is-size-5 publication-authors">
+                                <span class="author-block" style="font-size: 0.85em">
+                                    <sup>1</sup>
+                                    National Taiwan University
+                                </span><br>
+                                <span class="author-block" style="font-size: 0.85em">
+                                    <sup>2</sup>
+                                    National Yang Ming Chiao Tung University
+                                </span><br>
+                                <span class="author-block" style="font-weight: bold;">ICLR 2025</span>
+                                <br>
+                                <span class="author-block" style="font-weight: bold;">ARLET (ICML Workshop) 2024</span>                
+                            </div>
+
+                            <div class="column has-text-centered">
+                                <div class="publication-links">
+
+                                    <span class="link-block">
+                                        <a href="https://openreview.net/pdf?id=UpQLu9bzAR" target="_blank"
+                                            class="external-link button is-normal is-rounded is-dark">
+                                            <span class="icon">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </span>
+                                            <span>Paper</span>
+                                        </a>
+                                    </span>
+                                    <span class="link-block">
+                                        <a href="https://openreview.net/forum?id=UpQLu9bzAR" target="_blank"
+                                            class="external-link button is-normal is-rounded is-dark">
+                                            <span class="icon">
+                                                <i class="fa-solid fa-earth-americas"></i>
+                                            </span>
+                                            <span>OpenReview</span>
+                                        </a>
+                                    </span>
+
+                                    <span class="link-block">
+                                        <a href="#" target="_blank"
+                                            class="external-link button is-normal is-rounded is-dark">
+                                            <span class="icon" style="vertical-align: middle; font-size: 20px;"><i class="fa-solid fa-database"></i></span>
+                                            <span>Dataset (TBA)</span>
+                                        </a>
+                                    </span>
+                                    <span class="link-block">
+                                        <a href="https://github.com/cmlab-victor/victor-code" target="_blank"
+                                            class="external-link button is-normal is-rounded is-dark">
+                                            <span class="icon">
+                                                <i class="fa-brands fa-github"></i>
+                                            </span>
+                                            <span>Code (In Progress)</span>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Paper abstract -->
+    <section class="section hero ">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full">
+                    <h2 class="title is-4">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p style="width: 76%; margin-left: auto; margin-right: auto;">
+                        We study reward models for long-horizon manipulation by learning from action-free videos and language instructions, which we term the visual-instruction correlation (VIC) problem. Existing VIC methods face challenges in learning rewards for longhorizon tasks due to their lack of sub-stage awareness, difficulty in modeling task complexities, and inadequate object state estimation. To address these challenges, we introduce VICtoR, a novel hierarchical VIC reward model capable of providing effective reward signals for long-horizon manipulation tasks. Trained solely on primitive motion demonstrations, VICtoR effectively provides precise reward signals for long-horizon tasks by assessing task progress at various stages using a novel stage detector and motion progress evaluator. We conducted extensive experiments in both simulated and real-world datasets. The results suggest that VICtoR outperformed the best existing methods, achieving a 43% improvement in success rates for long-horizon tasks.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- End paper abstract -->
+
+
+
+    <!-- SESAME -->
+    <section class="section ">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full">
+                    <h2 class="title is-4">Vision-Instruction Correlation (VIC) Reward Learning</h2>
+                </div>
+            </div>
+            <!-- <div id="results-carousel" class="carousel results-carousel"> -->
+                <div class="content has-text-justified">
+                    <p>
+                        The <b>reward function</b> plays a critical role in the reinforcement learning (RL) framework. However, in practice, we often lack a reward function that provides precise and informative guidance, especially for long-horizon tasks. Recently, methods that leverage <b>vision-instruction correlation (VIC)</b> as reward signals have emerged, offering a more accessible way to specify tasks through language. Specifically, VIC-based methods frame reward modeling as a regression or classification problem and train the reward model on <b>action-free</b> demonstrations and instructions. 
+                    </p>
+                </div>
+                <div class="item is-vcentered" style="width: 85%; margin-left: auto; margin-right: auto;">
+                    <img src="static/images/figures/main_overview.svg" alt="VICtoR overview" />
+                </div>
+                <br>
+                <div class="content has-text-justified">
+                    <p>
+                        Even though existing VIC methods have made several breakthroughs, there are three limitions we observe when applying them to long-horizon manipulation tasks: (1) <b>No awareness of task decomposition</b>: Failing to divide complex tasks into manageable parts limits adaptability. (2) <b>Confusion from variance in task difficulties</b>: Training a reward model on long-horizon tasks impairs the learning of reward signals and fails to generate suitable progressive rewards. (3) <b>Ambiguity from lacking explicit object state estimates</b>: Relying on whole-scale image observations can overlook critical environmental changes. For instance, when training for the task <i>move the block into the closed drawer</i>, previous VIC models would assign high rewards for moving the block even if the drawer is closed, misleading the learning process.
+                    </p>
+
+                    <p>
+                        Motivated by this, we aim to develop a hierarchical assessment model that decomposes long-horizon tasks into manageable segments. Specifically, the model evaluates overall task progress at three levels: <b>stage</b>, <b>motion</b> (action primitive), and <b>motion progress</b>. With this design, our model can better capture progress changes and environmental status.
+                    </p>
+                </div>
+        </div>
+    </section>
+
+
+
+    <!-- DATASET -->
+    <section class="section hero ">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full">
+                    <h2 class="title is-4">Our Method: VICtoR</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            VICtoR employs a hierarchical approach to assess task progress at various levels, including stage, motion, and motion progress. It consists of three main components: (1) a <b>Task Knowledge Generator</b> that decomposes the task into stages and identifies the necessary object states and motions for each stage; (2) a <b>Stage Detector</b> that detects object states to determine the current stage based on the generated knowledge; (3) a <b>Motion Progress Evaluator</b> that assesses motion completion within stages. With this information, VICtoR then transforms it into rewards. Both the Stage Detector and Motion Progress Evaluator are trained on <b>motion-level</b> videos labeled with object states, which are autonomously annotated during video collection. This setup enables VICtoR to deliver precise reward signals for complex, unseen long-horizon tasks composed of these motions in any sequence.
+                        </p>
+                    </div>
+                    <br>
+                    <div class="item is-vcentered" style="width: 95%; margin-left: auto; margin-right: auto;">
+                        <img src="static/images/figures/main_pipeline.svg" alt="VICtoR pipeline" />
+                    </div>
+                    <br>
+                    <div class="content has-text-justified">
+                        <b>Training Objectives</b>: In VICtoR, two components require training: the Object Status Classifier (in the Stage Detector) and the Motion Progress Evaluator. The former is trained using cross-entropy loss, while the latter is trained with three variants of InfoNCE loss. Below are their details and schematic diagrams:
+                        <ul>
+                            <li>
+                                <b>Time Contrastive Loss </b>
+                                <math title="L_cls">
+                                    <mstyle>
+                                        <mrow>
+                                            <msub>
+                                                <mi>L</mi>
+                                                <mo>tcn</mo>
+                                            </msub>
+                                        </mrow>
+                                    </mstyle>
+                                </math> 
+                                : It encourages images that are temporally closer to have more similar representations (embeddings) than those that are temporally distant or from different videos.
+                            </li>
+                            <li>
+                                <b>Motion Contrastive Loss</b>
+                                <math title="L_cls">
+                                    <mstyle>
+                                        <mrow>
+                                            <msub>
+                                                <mi>L</mi>
+                                                <mo>mcn</mo>
+                                            </msub>
+                                        </mrow>
+                                    </mstyle>
+                                </math> 
+                                : The objective aligns each motion's embedding with its relevant language embedding and separates it from unrelated language embeddings.
+                            </li>
+                            <li>
+                                <b>Language-Frame Contrastive Loss</b>
+                                <math title="L_tem">
+                                    <mstyle>
+                                        <mrow>
+                                            <msub>
+                                                <mi>L</mi>
+                                                <mo>lfcn</mo>
+                                            </msub>
+                                        </mrow>
+                                    </mstyle>
+                                </math> 
+                                : It brings the progress embeddings of nearly completed steps closer to the instruction embedding of the motion while distancing the progress embeddings of frames from earlier steps.
+                            </li>
+                        </ul>
+                        <br>
+                        <div class="item is-vcentered" style="width: 85%; margin-left: auto; margin-right: auto;">
+                            <img src="static/images/figures/contrastive.svg" alt="training objetives" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+
+    <section class="section hero">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full">
+                    <h2 class="title is-4">Experimental Settings</h2>
+                    <div class="content has-text-justified">
+                        <b>Tasks and Baselines</b>: To assess VICtoR's effectiveness, we train the same RL method with each reward model for every task. We construct nine simulated long-horizon manipulation tasks in CoppeliaSim and additionally evaluate all reward models on the real-world benchmark XSkill. For baselines, we compare VICtoR with the following reward models:
+                        <ul>
+                            <li>
+                                <b>Sparse Reward</b>: A binary reward function assigns a reward only when the task succeeds.
+                            </li>
+                            <li>
+                                <b>Stage Reward</b>: A reward function that assigns a reward equal to the stage number when the agent reaches a new stage.
+                            </li>
+                            <li>
+                                <b>LOReL (CoRL'21)</b>: A language-conditioned reward model that learns a classifier to evaluate whether the progression between frames at time 0 and time t aligns with the task instruction.
+                            </li>
+                            <li>
+                                <b>LIV (ICML'23)</b>: A vision-language representation for robotics that can be utilized as a reward model by finetuning on target-domain data.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="item is-vcentered" style="width: 55%; margin-left: auto; margin-right: auto;">
+                        <img src="static/images/figures/main_env.svg" alt="environments" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section hero">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full">
+                    <h2 class="title is-4">Main Results</h2>
+                    <div class="content has-text-justified">
+                        In our main experiment, a PPO policy is trained using the rewards generated by VICtoR and four other reward models for each task. The "S/M" below the task IDs represents the total number of stages and motions required to complete the task. The results clearly show that the RL method trained with VICtoR's rewards can learn to perform more complex and long-horizon tasks compared to those trained with other reward models. Notably, for long-horizon tasks, VICtoR achieves an average performance improvement of <b>43%</b>.
+                    </div>
+                    <div class="item is-vcentered" style="width: 90%; margin-left: auto; margin-right: auto;">
+                        <img src="static/images/figures/main_result.svg" alt="main results" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section hero">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-full">
+                    <h2 class="title is-4">Reward Visualization</h2>
+                    <div class="content has-text-justified">
+                        To verify whether VICtoR provides informative rewards, we visualized the potential (reward) curves for two cases: one with videos that match the corresponding instructions and another with incorrect videos using the same instructions. For the <b>correct action case (left)</b>, the potential curves show that VICtoR effectively identifies task progress by increasing the potential as the agent completes the task—a capability not matched by previous VIC reward models. For the <b>incorrect action case (right)</b>, as the agent moves from the right to the left side to close the drawer, VICtoR's rewards initially show an increase in potential. This increase is logical, as these movements align with the first stage of the instruction, <i>open the light</i>. However, as the agent continues toward the drawer, VICtoR recognizes the incorrect task and begins to decrease the reward, effectively discouraging the agent’s movement. These two cases highlight VICtoR's ability to analyze agent movement and task progress accurately.                    
+                    </div>
+                    <br>
+                    <div class="item is-vcentered" style="width: 100%; margin-left: auto; margin-right: auto;">
+                        <img src="static/images/figures/misorder_vis.svg" alt="progress visualization" />
+                    </div>
+                    <br>
+                    <br>
+                    <div class="columns is-centered">
+                        <div class="column ">
+                            <div class="content has-text-justified">
+                                Next, we further visualize the policy execution progress and VICtoR's motion determination at each time step. VICtoR measures the embedding distance between motion descriptions and frame embeddings as a basis for generating rewards. As shown on the right, VICtoR accurately switches motions at the appropriate time step and reduces the embedding distance as the agent approaches each motion's goal.
+                            </div>
+                        </div>
+                        <div class="column is-two-thirds">
+                            <div class="item is-vcentered">
+                                <img src="static/images/figures/execution.gif" alt="execution" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+                    
+    <!--BibTex citation -->
+    <section class="section" id="BibTeX">
+        <div class="container is-max-desktop content">
+            <h2 class="title is-centered has-text-centered">Citations</h2>
+            If you find our VICtoR helpful and useful for your research, please cite our work as follows:
+        <pre><code>@inproceedings{hung2025victor, 
+        title={VICtoR: Learning Hierarchical Vision-Instruction Correlation Rewards for Long-horizon Manipulation}, 
+        author={Kuo-Han Hung and Pang-Chi Lo and Jia-Fong Yeh and Han-Yuan Hsu and Yi-Ting Chen and Winston H. Hsu}, 
+        booktitle={The Thirteenth International Conference on Learning Representations (ICLR)}, 
+        url={https://openreview.net/forum?id=UpQLu9bzAR}, 
+        year={2025}
+    }</code></pre>
+        <br>
+        If you have any question, feel free to reach out to <a href="mailto:jiafongyeh@ieee.org">Jia-Fong Yeh</a> or raise an issue on <a href="https://github.com/cmlab-victor/victor-code" target="_blank">VICtoR's github repo</a>.
+        </div>
+    </section>
+    <!--End BibTex citation -->
+
+    <footer class="footer">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content">
+                        <p>
+                            This project page was modified from <a
+                                href="https://aed-neurips.github.io/" target="_blank">AED</a>, which was based on the <a
+                                href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                                target="_blank">Academic Project Page Template</a>.
+                            You are free to borrow the source code of this website, we just ask that you link back to this page in
+                            the footer. <br> This website is licensed under a <a rel="license"
+                                href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+                                Commons Attribution-ShareAlike 4.0 International License</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Statcounter tracking code -->
+
+    <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+
+    <!-- End of Statcounter Code -->
+
+</body>
+
+</html>
